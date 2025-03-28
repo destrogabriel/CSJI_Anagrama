@@ -157,37 +157,21 @@
             });
         }
 
-        function selectLetter(letter, btn) {
-            if (btn.classList.contains("correct") || btn.classList.contains("wrong")) return;
-
-            selectedLetters += letter;
-            btn.classList.add("selected");
-
-            let correctNameWithoutSpace = currentStudent.name.replace(/\s+/g, '');
-
-            if (selectedLetters === correctNameWithoutSpace.substring(0, selectedLetters.length)) {
-                btn.classList.add("correct");
-                document.getElementById("selectedLetters").textContent = selectedLetters;
-
-                if (selectedLetters === correctNameWithoutSpace) {
-                    let finalName = currentStudent.name;
-                    document.getElementById("message").textContent = `Parabéns! ${finalName}`;
-                    document.getElementById("message").style.color = "green";
-                    remainingStudents = remainingStudents.filter(s => s !== currentStudent);
-                    setTimeout(loadNextStudent, 2000);
-                }
-            } else {
-                document.getElementById("message").textContent = "Errou! Tente novamente!";
-                document.getElementById("message").style.color = "red";
-                document.querySelectorAll(".letter").forEach(button => button.disabled = true);
-                setTimeout(loadNextStudent, 2000);
-            }
-        }
-
         function restartGame() {
             remainingStudents = [...students];
+            selectedLetters = "";
+            document.getElementById("selectedLetters").textContent = "";
+            document.getElementById("message").textContent = "";
+            document.getElementById("message").style.color = "black";
+
+            let letterButtons = document.querySelectorAll(".letter");
+            letterButtons.forEach(button => {
+                button.classList.remove("correct", "wrong", "selected");
+                button.disabled = false;
+            });
+
             document.querySelector("h1").textContent = "ESCOLHA AS LETRAS DO SEU NOME";
-            document.getElementById("currentClass").textContent = "Turma da Tia Tati";
+            document.getElementById("currentClass").textContent = "Turminha da Tia Tati";
             document.getElementById("restart").style.display = "none";
             loadNextStudent();
         }
