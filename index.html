@@ -3,23 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anagrama CSJI - Turminha da Tia Tati</title>
+    <title>Anagrama CSJI - Turma da Tia Tati</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
             padding: 20px;
-            background-color: #86b7f7;
+            margin-bottom: 80px; /* Dá espaço para a logo na parte inferior */
+            background-color: #7eb3e6;
         }
 
         h1 {
             font-size: 24px;
-        }
-
-        #currentClass {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 10px;
         }
 
         #container {
@@ -80,14 +75,17 @@
         }
 
         #schoolLogo {
-            margin-top: 40px;
-            width: 200px;
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            max-width: 150px;  /* Ajuste o tamanho da logo */
             height: auto;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
-    <div id="currentClass">TURMINHA DA TIA TATI</div>
     <h1>ESCOLHA AS LETRAS DO SEU NOME</h1>
     <div id="container">
         <img id="studentImage" src="" alt="Aluno">
@@ -97,7 +95,8 @@
     </div>
     <button id="restart" onclick="restartGame()">Reiniciar</button>
 
-    <img id="schoolLogo" src="csji_logo.png" alt="Logo da Escola">
+    <!-- Logo do CSJI na parte inferior -->
+    <img id="schoolLogo" src="csji_logo.png" alt="Logo CSJI">
 
     <script>
         const students = [
@@ -132,7 +131,6 @@
                 document.querySelector("h1").textContent = "Turma da Tia Cátia";
                 document.getElementById("container").innerHTML = "<h2>Todos completaram! Parabéns!</h2>";
                 document.getElementById("restart").style.display = "block";
-                document.getElementById("currentClass").textContent = "Turma da Tia Cátia";
                 return;
             }
 
@@ -157,21 +155,36 @@
             });
         }
 
+        function selectLetter(letter, btn) {
+            if (btn.classList.contains("correct") || btn.classList.contains("wrong")) return;
+
+            selectedLetters += letter;
+            btn.classList.add("selected");
+
+            let correctNameWithoutSpace = currentStudent.name.replace(/\s+/g, '');
+
+            if (selectedLetters === correctNameWithoutSpace.substring(0, selectedLetters.length)) {
+                btn.classList.add("correct");
+                document.getElementById("selectedLetters").textContent = selectedLetters;
+
+                if (selectedLetters === correctNameWithoutSpace) {
+                    let finalName = currentStudent.name;
+                    document.getElementById("message").textContent = `Parabéns! ${finalName}`;
+                    document.getElementById("message").style.color = "green";
+                    remainingStudents = remainingStudents.filter(s => s !== currentStudent);
+                    setTimeout(loadNextStudent, 2000);
+                }
+            } else {
+                document.getElementById("message").textContent = "Errou! Tente novamente!";
+                document.getElementById("message").style.color = "red";
+                document.querySelectorAll(".letter").forEach(button => button.disabled = true);
+                setTimeout(loadNextStudent, 2000);
+            }
+        }
+
         function restartGame() {
             remainingStudents = [...students];
-            selectedLetters = "";
-            document.getElementById("selectedLetters").textContent = "";
-            document.getElementById("message").textContent = "";
-            document.getElementById("message").style.color = "black";
-
-            let letterButtons = document.querySelectorAll(".letter");
-            letterButtons.forEach(button => {
-                button.classList.remove("correct", "wrong", "selected");
-                button.disabled = false;
-            });
-
             document.querySelector("h1").textContent = "ESCOLHA AS LETRAS DO SEU NOME";
-            document.getElementById("currentClass").textContent = "Turminha da Tia Tati";
             document.getElementById("restart").style.display = "none";
             loadNextStudent();
         }
